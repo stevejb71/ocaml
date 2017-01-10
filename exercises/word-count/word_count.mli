@@ -1,5 +1,3 @@
-(** Word-count exercise *)
-
 open Core.Std
 
 (**
