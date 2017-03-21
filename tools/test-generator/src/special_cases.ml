@@ -20,6 +20,13 @@ let optional_int_or_string ~(none: int) = function
 | `Int n when n = none -> "None"
 | x -> json_to_string x
 
+let false_to_none = 
+  let int_to_string n = if n < 0 then "(" ^ Int.to_string n ^ ")" else Int.to_string n in
+  function
+| `Bool false -> "None"
+| `Int x -> "(Some " ^ int_to_string x ^ ")"
+| _ -> failwith "unhandled"
+
 let default_value ~(key: string) ~(value: string) (parameters: (string * string) list): (string * string) list =
   if List.exists ~f:(fun (k, _) -> k = key) parameters
   then parameters
@@ -60,6 +67,7 @@ let edit_expected ~(stringify: json -> string) ~(slug: string) ~(value: json) = 
 | "phone-number" -> option_of_null value
 | "connect" -> edit_connect_expected value
 | "change" -> edit_change_expected value
+| "wordy" -> false_to_none value
 | _ -> stringify value
 
 let edit_say (ps: (string * json) list) =

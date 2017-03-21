@@ -35,7 +35,7 @@ let tests = [
          (make_change ~target:94 ~coins:[5; 10]);
    "cannot find negative change values" >::
       ae None 
-         (make_change ~target:(-5) ~coins:[1; 2; 5]);
+         (make_change ~target:-5 ~coins:[1; 2; 5]);
 ]
 
 let () =
