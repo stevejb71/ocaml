@@ -1,4 +1,4 @@
-open Core
+open Base
 
 type callback_id = int
 
@@ -20,7 +20,7 @@ and 'a cell = {
 
 let next_cell_id () =
   let cell_id = !latest_cell_id in
-  latest_cell_id := succ !latest_cell_id;
+  latest_cell_id := Int.succ !latest_cell_id;
   cell_id
 
 let apply x f = f x

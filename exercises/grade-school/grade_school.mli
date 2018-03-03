@@ -1,6 +1,3 @@
-(** Grade-school exercise *)
-open Core
-
 type school
 
 val empty_school :  school
@@ -13,6 +10,3 @@ val grade : int -> school -> string list
 
 (** Sort the list of students in a grade, if necessary *)
 val sort : school -> school
-
-(** Return the list of grades and students as a map *)
-val to_map : school -> string list Int.Map.t

@@ -1,10 +1,10 @@
 (* Based off the Haskell solution by Tarmean at http://exercism.io/submissions/6dc2eef7e7eb469d8657111fc4389fc0 *)
 
-open Core
+open Base
 
 type dominoe = int * int
 
-(* Functions from Haskell that I can't find in Core! *)
+(* Functions from Haskell that I can't find in Base! *)
 
 let zip_with (xs: 'a list) (ys: 'b list) ~(f: 'a -> 'b -> 'c) = 
   let rec go xs ys acc = match (xs,ys) with

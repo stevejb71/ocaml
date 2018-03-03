@@ -1,4 +1,4 @@
-open Core
+open Base
 
 let (>|>) f g x = g (f x)
 
@@ -9,17 +9,19 @@ type sentence =
 | Def of string
 | Normal of string list
 
+module StringMap = Map.M(String)
 type stack = int list
-
 type handler = stack -> stack option
-type vocabulary = handler String.Map.t
+type vocabulary = handler StringMap.t
+
+let emptyStringMap = Map.empty (module String)
 
 let handle_binary_op f = function
 | x :: y :: xs -> Some ((f y x) :: xs)
 | _ -> None
 
 let std_vocabulary: vocabulary =
-  String.Map.empty 
+  emptyStringMap 
   |> Map.set ~key:"+" ~data:(handle_binary_op (+))
   |> Map.set ~key:"-" ~data:(handle_binary_op (-))
   |> Map.set ~key:"*" ~data:(handle_binary_op ( * ))
@@ -55,7 +57,7 @@ let rec eval_all (stack: 'a) (fs: ('a -> 'a option) list): 'a option = match fs 
 )
 
 let to_sentence (words: string): sentence =
-  if words.[0] = ':' && string_last words = Some ';'
+  if Char.(words.[0] = ':') && Option.equal Char.equal (string_last words) (Some ';')
   then Def words
   else Normal (String.split ~on:' ' words)
 

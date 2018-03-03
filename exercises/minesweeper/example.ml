@@ -1,10 +1,12 @@
-open Core
+open Base
 
 type field =
   | Mine
   | Empty of int (* Empty spot, number is adjacent mines *)
 
 type board = { fields: field array array; width: int; height: int }
+
+let tuple2_eq (x1, y1) (x2, y2) = x1 = x2 && y1 = y2
 
 let board_of_strings strings =
   let to_field = function
@@ -29,7 +31,7 @@ let adjacent_offsets =
   ([-1; 0; 1] >>= fun x ->
    [-1; 0; 1] >>= fun y ->
    return (x, y))
-  |> List.filter ~f:(fun c -> c <> (0, 0))
+  |> List.filter ~f:(fun c -> not (tuple2_eq c (0, 0)))
 
 let mark_mine board c =
   let valid_coord (x, y) = x >= 0 && x < board.width && y >= 0 && y < board.height in

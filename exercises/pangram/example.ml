@@ -1,8 +1,10 @@
-open Core
+open Base
 
-let string_to_set s = Char.Set.of_list (String.to_list s)
+module CharSet = Set.M(Char)
 
-let alphabet_set = string_to_set "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+let string_to_set (s: string): CharSet.t = Set.of_list CharSet.comparator (String.to_list_rev s)
+
+let alphabet_set: CharSet.t = string_to_set "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 let is_pangram s = 
   let normalize s = String.filter ~f:Char.is_alpha s |> String.uppercase in
