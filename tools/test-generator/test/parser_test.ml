@@ -1,7 +1,8 @@
-open Core
+open Base
 open OUnit2
 open Parser
 open Model
+open Utils
 
 let printer (r: (Model.tests, Parser.error) Result.t): string = match r with
 | Ok tests -> tests_to_string tests
@@ -76,21 +77,21 @@ let parser_tests = [
       );
 
   "parses leap.json" >::(fun ctxt ->
-      match call_parser @@ In_channel.read_all "test/leap.json" with
+      match call_parser @@ read_file "test/leap.json" with
       | Ok (Single p) -> assert_equal 4 (List.length p)
       | Ok (Suite p) -> assert_failure "was suite"
       | Error e -> assert_failure ("failed to parse leap.json: " ^ show_error e)
   );
 
   "parses hello_world.json which has a # element as documentation" >::(fun ctxt ->
-      match call_parser @@ In_channel.read_all "test/hello_world.json" with
+      match call_parser @@ read_file "test/hello_world.json" with
       | Ok (Single p) -> ()
       | Ok (Suite p) -> assert_failure "was suite"
       | Error e -> assert_failure ("failed to parse hello_world.json: " ^ show_error e)
     );
 
   "parses difference_of_squares.json" >::(fun ctxt ->
-      match call_parser @@ In_channel.read_all "test/difference_of_squares.json" with
+      match call_parser @@ read_file "test/difference_of_squares.json" with
       | Ok (Suite p) -> assert_equal [
         "square_the_sum_of_the_numbers_up_to_the_given_number"; 
         "sum_the_squares_of_the_numbers_up_to_the_given_number"; 
@@ -100,7 +101,7 @@ let parser_tests = [
     );
 
   "parses nested json in beer-song by dropping intermediate nesting levels" >::(fun ctxt ->
-      match call_parser @@ In_channel.read_all "test/beer-song.json" with
+      match call_parser @@ read_file "test/beer-song.json" with
       | Ok (Suite p) -> assert_equal [
         "verse"; 
         "lyrics"] (List.map ~f:(fun x -> x.name) p)
@@ -109,7 +110,7 @@ let parser_tests = [
     );
 
   "parses json with a methods key for dynamic languages" >::(fun ctxt ->
-      match call_parser @@ In_channel.read_all "test/with-methods-key.json" with
+      match call_parser @@ read_file "test/with-methods-key.json" with
       | Ok (Suite p) -> assert_failure "was suite"
       | Ok (Single p) -> ()
       | Error e -> assert_failure ("failed to parse with-methods-key.json: " ^ show_error e)

@@ -1,4 +1,4 @@
-open Core
+open Base
 
 open Model
 open Yojson.Basic
@@ -7,7 +7,7 @@ open Yojson.Basic.Util
 let strip_quotes s = String.drop_prefix s 1 |> Fn.flip String.drop_suffix 1
 
 let two_elt_list_to_tuple (j: json): string = match j with
-| `List [`Int x1; `Int x2] -> sprintf "(%d,%d)" x1 x2
+| `List [`Int x1; `Int x2] -> Printf.sprintf "(%d,%d)" x1 x2
 | _ -> failwith "two element list expected, but got " ^ (json_to_string j)
 
 let map_elements (to_str: json -> string) (parameters: (string * json) list): (string * string) list =
@@ -28,7 +28,7 @@ let optional_int_or_string ~(none: int) = function
 | x -> json_to_string x
 
 let default_value ~(key: string) ~(value: string) (parameters: (string * string) list): (string * string) list =
-  if List.exists ~f:(fun (k, _) -> k = key) parameters
+  if List.exists ~f:(fun (k, _) -> String.(k = key)) parameters
   then parameters
   else (key, value) :: parameters
 
@@ -64,7 +64,7 @@ let edit_change_expected (value: json) = match value with
 let edit_bowling_expected (value: json) = match value with
 | `Int n -> "(Ok " ^ (Int.to_string n) ^ ")"
 | `Assoc [(k, v)] -> 
-    if k = "error" then "(Error " ^ json_to_string v ^ ")" else failwith ("Can only handle error value but got " ^ k)
+    if String.(k = "error") then "(Error " ^ json_to_string v ^ ")" else failwith ("Can only handle error value but got " ^ k)
 | _ -> failwith "Bad json value in bowling"
 
 let edit_say (ps: (string * json) list) =
@@ -105,7 +105,7 @@ let edit_palindrome_products (ps: (string * json) list): (string * string) list 
         find "factors" >>= fun factors ->
         let factors = to_list factors in
         let factors_str = "[" ^ (List.map ~f:two_elt_list_to_tuple factors |> String.concat ~sep:"; ") ^ "]" in
-        let expected = sprintf "Ok {value=%s; factors=%s}" (json_to_string value) factors_str in
+        let expected = Printf.sprintf "Ok {value=%s; factors=%s}" (json_to_string value) factors_str in
         Some ("expected", expected) in
       if Option.is_some success_result
       then Option.value_exn success_result

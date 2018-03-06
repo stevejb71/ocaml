@@ -1,4 +1,4 @@
-open Core
+open Base
 open Utils
 open Yojson.Basic
 open Yojson.Basic.Util
@@ -8,7 +8,7 @@ type error =
     TestMustHaveKeyCalledCases of string | ExpectingListOfCases | ExpectingMapForCase |
     NoDescription | BadDescription | UnrecognizedJson [@@deriving eq, show]
 
-let extract_parameters case =
+let extract_parameters (case: (string * json) list) =
   let open Result.Monad_infix in
   find_note case "input" UnrecognizedJson >>= fun input ->
   let input = to_assoc_note UnrecognizedJson input in
@@ -19,7 +19,7 @@ let extract_parameters case =
     
 let parse_case_assoc (parameters: (string * json) list): (case, error) Result.t =
   let find name e = List.Assoc.find parameters ~equal:String.equal name |> Result.of_option ~error:e in
-  let test_parameters = List.Assoc.remove parameters ~equal:String.equal "description" in
+  let test_parameters: (string * json) list = List.Assoc.remove parameters ~equal:String.equal "description" in
   let open Result.Monad_infix in
   find "description" NoDescription >>=
   to_string_note BadDescription >>= fun description ->

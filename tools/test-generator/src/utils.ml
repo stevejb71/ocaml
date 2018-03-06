@@ -1,4 +1,4 @@
-open Core
+open Base
 open Yojson.Basic
 open Yojson.Basic.Util
 
@@ -42,8 +42,8 @@ let safe_to_int_option json =
 let member_note error m json =
   try Ok (member m json) with Type_error _ -> Error error
 
-let find_note (xs: ('a, 'b) List.Assoc.t) (key: 'a) (error: 'e): ('b, 'e) Result.t = 
-  match List.Assoc.find ~equal:(=) xs key with
+let find_note (xs: (string, 'b) List.Assoc.t) (key: string) (error: 'e): ('b, 'e) Result.t = 
+  match List.Assoc.find ~equal:String.equal xs key with
   | Some v -> Ok v
   | None -> Error error
 
@@ -55,3 +55,16 @@ let find_arrayi ?start:(start = 0) xs ~f =
     else if f xs.(i) then Some (i, xs.(i))
     else go (i + 1) in
   go start
+
+let read_file filename: string =
+  let ic = open_in filename in
+  let buf = Buffer.create 128 in
+  let rec loop () =
+    let ch = input_char ic in
+    Buffer.add_char buf ch;
+    loop ()
+  in
+  try
+    loop ();      
+  with End_of_file ->
+    Buffer.contents buf

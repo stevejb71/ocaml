@@ -1,4 +1,4 @@
-open Core
+open Core_kernel
 
 let is_directory =
   Command.Spec.Arg_type.create
